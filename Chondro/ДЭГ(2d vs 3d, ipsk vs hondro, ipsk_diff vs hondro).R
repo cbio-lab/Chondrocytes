@@ -2,7 +2,8 @@
 library(ggplot2)
 library(vegan)
 library(DESeq2)
-meta_data_chondro <- read.xlsx("~/Desktop/chondro_metadata/chondro_metadata_1.xlsx", sheet= T, sep="\t")
+library(openxlsx)
+meta_data_chondro <- read.xlsx("~/Desktop/GitHub/Chondro/chondro_metadata/chondro_metadata_1.xlsx", sheet= T, sep="\t")
 
 meta_data_chondro_a <- meta_data_chondro
 colnames(meta_data_chondro_a)

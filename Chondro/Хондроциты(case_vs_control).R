@@ -32,7 +32,6 @@ gene_list_cluster_1_DR$cluster <- 'cl2'
 names(gene_list_cluster_1_DR)[names(gene_list_cluster_1_DR) == 'gene_list_cluster_1_DR'] <- 'gene_name'
 
 # ссылка на другие кластеры в области DR
-#file:///Users/egorka.1veretinicloud.com/Downloads/string_vector_graphic.svg 
 #https://string-db.org/cgi/network?taskId=bXuWK5RhDUnU&sessionId=bAs0oUG8zjlZ
 #https://string-db.org/cgi/network?taskId=bAqHpAJbFutW&sessionId=bAs0oUG8zjlZ
 
