@@ -470,3 +470,74 @@ gsea_greenyellow <- GSEA(geneList = rank_final_GSEA, TERM2GENE = data_greenyello
 gsea_df_greenyellow <- data.frame(gsea_greenyellow)
 write.table(x = gsea_df_greenyellow,file = "/home/veretinegor/R/greenyellow_module_coex.tsv")
 gseaNb(gsea_greenyellow, geneSetID = gsea_greenyellow$ID[1])
+
+# data from COex
+# green_module
+data_coex_green <- read.xlsx(xlsxFile = "~/Desktop/GitHub/Chondro/case_vs_control/green_module_coex.xlsx",
+                            colNames = T, sheet = T)
+length(colnames(data_coex_green))
+colnames(data_coex_green)[12] <- 'genes'
+
+data_coex_greenyellow <- read.xlsx(xlsxFile = "~/Desktop/GitHub/Chondro/case_vs_control/greenyellow_module_coex.xlsx", 
+                                  colNames = T, sheet = T)
+# greenyellow_module
+length(colnames(data_coex_greenyellow))
+colnames(data_coex_greenyellow)[12] <- 'genes'
+
+# STRING for green_module
+data_green_chondro <- read.csv(file = "~/Desktop/GitHub/Chondro/case_vs_control/data_green_chondro.tsv",
+                               sep = '\t', header = T)
+head(rank_for_case_vs_control)
+tail(rank_for_case_vs_control)
+# individual rank for green_module
+green_string_data <- read.xlsx(xlsxFile = "~/Desktop/GitHub/Chondro/case_vs_control/green_module/1. Focal adhesion + Extracellular matrix organization (green_modul_cluster).xlsx",
+                              sheet = T, colNames = T)
+colnames(green_string_data)[1] <- 'node1'
+custom_green_module <- c(unique(green_string_data$node1), unique(green_string_data$node2))
+custom_green_module_vector <- as.vector(custom_green_module)
+custom_green_module_df <- as.data.frame(custom_green_module_vector)
+custom_green_module_df$cluster <- 'green'
+colnames(custom_green_module_df)[1] <- 'gene_name'
+write.table(x = custom_green_module_df, 
+            file = '~/Desktop/GitHub/Chondro/case_vs_control/custom_green_module_df.tsv', quote = F,
+            sep = '\t')
+# GSEA
+gsea_chondro_green_GSEA <- GSEA(geneList = rank_for_case_vs_control, TERM2GENE = custom_green_module_df[c(2,1)], 
+                                     eps = 0, pAdjustMethod = "fdr",
+                                     pvalueCutoff = 0.05)
+gsea_chondro_green_GSEA_df <- as.data.frame(gsea_chondro_green_GSEA)
+gseaNb(gsea_chondro_green_GSEA, geneSetID = gsea_chondro_green_GSEA$ID[1])
+gsea_chondro_green_GSEA_df$core_enrichment
+typeof(gsea_chondro_green_GSEA_df$core_enrichment)
+# перевод в ветор 
+my_green <- scan(text = gsea_chondro_green_GSEA_df$core_enrichment, what = 'character', sep = '/')
+
+annotation_green_module_CC <- enrichGO(
+  gene          = my_green,      
+  universe      = vres_chondro_GG$gene_name,   
+  OrgDb         = org.Hs.eg.db,
+  ont           = "BP",        
+  pAdjustMethod = "BH",        
+  pvalueCutoff  = 0.05,        
+  qvalueCutoff  = 0.05,        
+  keyType = 'SYMBOL',
+  readable      = FALSE
+)
+annotation_green_module_CC_df <- as.data.frame(annotation_green_module_CC)
+dotplot(annotation_green_module_CC, showCategory = 15) + 
+  ggtitle("GO Cellular Components Enrichment")
+
+annotation_green_module_BP <- enrichGO(
+  gene          = my_green,      
+  universe      = vres_chondro_GG$gene_name,   
+  OrgDb         = org.Hs.eg.db,
+  ont           = "BP",        
+  pAdjustMethod = "BH",        
+  pvalueCutoff  = 0.05,        
+  qvalueCutoff  = 0.05,        
+  keyType = 'SYMBOL',
+  readable      = FALSE
+)
+annotation_green_module_BP <- as.data.frame(annotation_green_module_BP)
+dotplot(annotation_green_module_CC, showCategory = 15) + 
+  ggtitle("GO Biological Process Enrichment")
