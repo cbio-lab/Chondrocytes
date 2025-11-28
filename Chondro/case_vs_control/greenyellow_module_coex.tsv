@@ -1,2 +1,2 @@
 "ID" "Description" "setSize" "enrichmentScore" "NES" "pvalue" "p.adjust" "qvalue" "rank" "leading_edge" "core_enrichment"
-"greenyellow" "greenyellow" "greenyellow" 44 0.300545749434657 0.98160334356986 0.463917525773196 0.463917525773196 NA 1221 "tags=18%, list=13%, signal=16%" "PLAUR/ERCC1/TACC3/PFKP/PRR11/WDR1/SMOX/P3H2"
+"greenyellow" "greenyellow" "greenyellow" 44 0.300545749434657 0.98817382349749 0.453164556962025 0.453164556962025 NA 1221 "tags=18%, list=13%, signal=16%" "PLAUR/ERCC1/TACC3/PFKP/PRR11/WDR1/SMOX/P3H2"
