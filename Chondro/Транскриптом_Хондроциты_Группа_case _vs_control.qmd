@@ -1,12 +1,7 @@
-``` r
----
-title: "transcriptome_chondrocytes_case_vs_control"
-format: html
-editor: visual
----
-```
-
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 # импорт датасета
 library(ggplot2)
 library(vegan)
@@ -20,13 +15,14 @@ library(GseaVis)
 library(enrichplot) # на 22 версии BiocManager (аналогично и дргуие пакеты)
 library(org.Hs.eg.db) # база данных человеческого организма
 library(DOSE)
+library(DT)
 ```
 
 ## Материалы и методы.
 
 <p style="text-align: justify; text-indent: 1.5em; margin-bottom: 1em; line-height: 1.5;">
 
-Профили экспрессии генов были количесвтенно определены при помощи HTSeq-count v2.0.5 \[Anders et al., 2015\]. Дифференциальный анализ экспрессии генов был проведен с использованием DESeq2 v1.44.0 \[Love et al., 2014\], включающий формулу проектирования \~ тип прочтения + тип клеток + шруппа клеток для учета технической вариабельности. Анализ обогащения генов выполнен при помощи fgsea v1.31.6 \[Korotkevich et al., 2016\] и clusterProfiler v4.12.6 \[Wu et al., 2021\] с использованием следующих баз данных: Gene Ontology \[Gene Ontology Consortium, 2023\], KEGG \[Kanehisa et al., 2023\], WikiPathways \[Martens et al., 2021\] и Reactome \[Gillespie et al., 2022\]. Идентификаторы генов были сопоставлены между различными системамаи координирования с использованием пакета biomaRT, в свою очередь, анализ данных коэкспрессии был выполнен при помощи BioNERO v1.12.0 \[Almeida-Silva et al., 2022\]. Сети белок-белкового взаимодействия для дифференциально экспрессируемых генов и коэкспрессируемых модулей были сгенерированы с использованием базы данных STRING v12.0 \[Szklarczyk et al., 2023\]. Для анализа совместно экспрессируемых модулей генов, связанных с экспериментальными группами, были использованы пакеты vegan v2.6-8 \[Oksanen et al., 2022\], org.Hs.eg.db v3.18.0 \[Carlson et al., 2019\], DOSE v3.28.2 \[Yu et al., 2015\] и clusterProfiler v4.12.6 \[Wu et al., 2021\]. Визуализация данных была произведена при помощи ggplot2 v3.5.1 \[<https://ggplot2.tidyverse.org>\], BioNERO v1.12.0 \[Almeida-Silva et al., 2022\], EnhancedVolcano \[<https://github.com/kevinblighe/EnhancedVolcano>\] и GseaVis \[<https://github.com/junjunlab/GseaVis>\]. Весь анализ данных был произведен с применением языка R v4.5.1.
+Профили экспрессии генов были количественно определены при помощи HTSeq-count v2.0.5 \[Anders et al., 2015\]. Дифференциальный анализ экспрессии генов был проведен с использованием DESeq2 v1.44.0 \[Love et al., 2014\], включающий формулу проектирования \~ тип прочтения + тип клеток + группа клеток для учета технической вариабельности. Анализ обогащения генов выполнен при помощи fgsea v1.31.6 \[Korotkevich et al., 2016\] и clusterProfiler v4.12.6 \[Wu et al., 2021\] с использованием следующих баз данных: Gene Ontology \[Gene Ontology Consortium, 2023\], KEGG \[Kanehisa et al., 2023\], WikiPathways \[Martens et al., 2021\] и Reactome \[Gillespie et al., 2022\]. Идентификаторы генов были сопоставлены между различными системамаи координирования с использованием пакета biomaRT, в свою очередь, анализ данных коэкспрессии был выполнен при помощи BioNERO v1.12.0 \[Almeida-Silva et al., 2022\]. Сети белок-белкового взаимодействия для дифференциально экспрессируемых генов и коэкспрессируемых модулей были сгенерированы с использованием базы данных STRING v12.0 \[Szklarczyk et al., 2023\]. Для анализа совместно экспрессируемых модулей генов, связанных с экспериментальными группами, были использованы пакеты vegan v2.6-8 \[Oksanen et al., 2022\], org.Hs.eg.db v3.18.0 \[Carlson et al., 2019\], DOSE v3.28.2 \[Yu et al., 2015\] и clusterProfiler v4.12.6 \[Wu et al., 2021\]. Визуализация данных была произведена при помощи ggplot2 v3.5.1 \[<https://ggplot2.tidyverse.org>\], BioNERO v1.12.0 \[Almeida-Silva et al., 2022\], EnhancedVolcano \[<https://github.com/kevinblighe/EnhancedVolcano>\] и GseaVis \[<https://github.com/junjunlab/GseaVis>\]. Весь анализ данных был произведен с применением языка R v4.5.1.
 
 <p>
 
@@ -112,14 +108,18 @@ library(DOSE)
 
 <p>
 
+<p style="text-align: justify;">
+
 ## Формирование метаданных.
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
-meta_data_chondro <- read.xlsx("~/Desktop/GitHub/Chondro/chondro_metadata/chondro_metadata_1.xlsx", 
-                               sheet= T, sep="\t")
-library(DT)
+meta_data_chondro <- read.xlsx("~/Desktop/GitHub/Chondro/chondro_metadata/chondro_metadata_1.xlsx", sheet= T, sep="\t")
 
+library(DT)
 datatable(meta_data_chondro,
           options = list(
             scrollX = TRUE,      
@@ -128,6 +128,14 @@ datatable(meta_data_chondro,
           ))
 ```
 
+<p>
+
+<p style="text-align: justify;">
+
+В данной сформированы метаданные для проведения исследования. При формировании метаданных учитывались следующие парамтеры: "run" (парное или единичное прочтение), "cell" (клетки), "type" (2d или 3d культуры), "paired" (прочтения), "group" (состояние нормы и патологии).
+
+</p>
+
 <p style="text-align: justify;">
 
 ## Анализ дифференциальной экспрессии генов.
@@ -135,15 +143,16 @@ datatable(meta_data_chondro,
 </p>
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 meta_data_chondro_a <- meta_data_chondro
-colnames(meta_data_chondro_a)
 
 # Перевести значения в factor()
 meta_data_chondro_a <- subset(meta_data_chondro_a, meta_data_chondro_a$group == 'control' | 
                                 meta_data_chondro_a$group == 'case')
 meta_data_chondro_a[] <- lapply(meta_data_chondro_a, factor)
-summary(meta_data_chondro_a)
 meta_data_chondro_a$group <- relevel(meta_data_chondro_a$group, ref = "control")
 # фильтруем метаданные для оценки case or control
 # DEseq2
@@ -161,7 +170,6 @@ min_samples <- ncol(ddsHTSeq) / 3 * 2
 norm_counts <- counts(ddsHTSeq, normalized = TRUE)
 keep <- rowSums(norm_counts >= min_count) >= min_samples
 ddsHTSeq <- ddsHTSeq[keep, ]
-summary(keep)
 
 ddsHTSeq <- DESeq(ddsHTSeq, test = "Wald")
 resultsNames(ddsHTSeq)
@@ -175,14 +183,10 @@ dist_matrix_1 <- vegdist(t(vst_counts_1), method = "euclidean")
 permanova_result_1 <- adonis2(dist_matrix_1 ~ run + type + group,
                               sample_info_1, 
                               permutations = 9999, by = "margin")
-print(permanova_result_1)
-print(colData(ddsHTSeq))
 
 pca_data_1 <- plotPCA(vsd_1, intgroup = c("group"), returnData = TRUE)
 
 # Проверяем структуру
-print(head(pca_data_1))
-print(class(pca_data_1))
 # Строим кастомизированный график
 percentVar <- round(100 * attr(pca_data_1, "percentVar"))
 
@@ -196,7 +200,6 @@ ggplot(pca_data_1, aes(x = PC1, y = PC2, color = group, shape = cell, )) +
   scale_shape_manual(values = 1:length(unique(pca_data_1$group)))
 
 norm_counts <- counts(ddsHTSeq, normalized = TRUE)
-summary(norm_counts)
 # Case vs Control
 res_chondro_GG <- results(ddsHTSeq, contrast = c("group", "case", "control")) 
 res_chondro_GG <- as.data.frame(res_chondro_GG)
@@ -245,13 +248,29 @@ write.table(cbind(gene_id = rownames(res_chondro_GG), res_chondro_GG),
             file = "~/Desktop/GitHub/Chondro/case_vs_control.tsv", sep = "\t", quote = F)
 # Points (>= | <=)
 res_chondro_GG_UR <- subset(res_chondro_GG, res_chondro_GG$log2FoldChange >= 0)
-tail(res_chondro_GG_UR)
 
 res_chondro_GG_DR <- subset(res_chondro_GG, res_chondro_GG$log2FoldChange <= 0)
-head(res_chondro_GG_DR)
 ```
 
+<p style="text-align: justify;">
+
+По результатам дифференциальной экспрессии генов мы можем оценить их распределение и значимость на графике, а также величину экспрессии в различных состояниях по табличным данным. Образцы на графике PCA соотвествуют двум контрольным группам: case (патология) и control (норма), являются хондроцитами (от пациента, 2d-культура). Образцы:
+
+-   E7_S55_L001_R1_001 69.102510 16.273896 control;
+
+-   E7_S55_L002_R1_001 67.235903 14.323059 control;
+
+-   E3_S51_L001_R1_001 64.084555 -18.383523 case;
+
+-   E3_S51_L002_R1_001 62.575896 -19.545576 case.
+
+</p>
+
+<p style="text-align: justify; text-indent: 1.5em; margin-bottom: 1em; line-height: 1.5;">
+
 ## Анализ базы данных STRING. Выбор кластеров после дифференциальной экспрессии генов.
+
+</p>
 
 <p style="text-align: justify; text-indent: 1.5em; margin-bottom: 1em; line-height: 1.5;">
 
@@ -264,6 +283,9 @@ head(res_chondro_GG_DR)
 ![](case_vs_control/UR/(+)(cl1)Mixed,%20incl.%20Amplification%20of%20signal%20from%20the%20kinetochores,%20and%20Condensin%20complex.svg){fig-align="center"}
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 custome_UR_1 <- read.xlsx(xlsxFile = "~/Desktop/Хондроциты(проверка результатов)/UR_chondro/Mixed, incl. Amplification of signal from the kinetochores, and Condensin complex_UR.xlsx",
                           colNames = T)
@@ -273,9 +295,7 @@ custome_UR_1_vector <- as.vector(custome_UR_1_vector)
 custome_UR_1_vector_df <- as.data.frame(custome_UR_1_vector)
 custome_UR_1_vector_df$cluster <- 'cl1'
 colnames(custome_UR_1_vector_df)[1] <- 'gene_name'
-library(DT)
-
-datatable(custome_UR_1,
+datatable(as.data.frame(custome_UR_1),
           options = list(
             scrollX = TRUE,      
             scrollY = "400px",   
@@ -283,15 +303,20 @@ datatable(custome_UR_1,
           ))
 ```
 
+<p style="text-align: justify; text-indent: 1.5em; margin-bottom: 1em; line-height: 1.5;">
+
 Второй кластер. Пониженная экспрессия генов (Extracellular matrix organization).
 
-</p>
+<p>
 
 ![](case_vs_control/DR/(-)Extracellular%20matrix%20organization+Mixed,%20incl.%20Interferon%20alpha:beta%20signaling,%20and%20Guanylate-binding%20protein,%20C-terminal.svg){fig-align="center"}
 
 ![](case_vs_control/DR/(-)ECM-receptor%20interaction+Extracellular%20matrix%20organization.svg){fig-align="center"}
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 custome_DR_1 <- read.xlsx(xlsxFile = "~/Desktop/Хондроциты(проверка результатов)/DR_chondro/Extracellular matrix organization_DR_cluster_1.xlsx",
                           colNames = T)
@@ -301,8 +326,6 @@ custome_DR_1_vector <- as.vector(custome_DR_1_vector)
 custome_DR_1_vector_df <- as.data.frame(custome_DR_1_vector)
 custome_DR_1_vector_df$cluster <- 'cl2'
 colnames(custome_DR_1_vector_df)[1] <- 'gene_name'
-library(DT)
-
 datatable(custome_DR_1,
           options = list(
             scrollX = TRUE,      
@@ -320,6 +343,9 @@ datatable(custome_DR_1,
 ![](case_vs_control/DR/(-)Interferon%20alphabeta%20signaling+Defense%20response%20to%20virus+Antiviral%20defense.svg)
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 custome_DR_2 <- read.xlsx(xlsxFile = "~/Desktop/Хондроциты(проверка результатов)/DR_chondro/Mixed, incl. Interferon alpha:beta signaling, and Guanylate-binding protein, C-terminal_DR_cluster_2.tsv.xlsx",
                           colNames = T)
@@ -337,13 +363,22 @@ datatable(custome_DR_2,
           ))
 ```
 
+<p style="text-align: justify;">
+
+Далее сформируем ранки для проведения GSEA.
+
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 # Genset
 gene_set <- rbind(custome_UR_1_vector_df, custome_DR_1_vector_df, custome_DR_2_vector_df)
 write.table(file = "~/Desktop/Хондроциты(проверка результатов)/case_vs_control_gene_set.tsv",
             quote = F, sep = '\t', x = gene_set)
 gene_set_list <- setNames(gene_set$cluster, as.character(gene_set$gene_name))
 ```
+
+</p>
 
 <p style="text-align: justify;">
 
@@ -352,13 +387,14 @@ gene_set_list <- setNames(gene_set$cluster, as.character(gene_set$gene_name))
 </p>
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 # Data from DESeq2
 vres_chondro_GG <- as.data.frame(vres_chondro_GG)
 metadata_for_chondro <- read.csv(file = "~/Desktop/Хондроциты(проверка результатов)/ensbl2geneid_first.tsv",
                                  sep = '\t')
-head(metadata_for_chondro)
-colnames(vres_chondro_GG)
 vres_chondro_GG <- merge(vres_chondro_GG, metadata_for_chondro, by = 'gene_id')
 vres_chondro_GG_LFC <- sign(vres_chondro_GG$log2FoldChange)
 vres_chondro_GG_pvalue <- -log10(vres_chondro_GG$pvalue)
@@ -376,12 +412,13 @@ gsea_chondro_case_vs_control_df <- as.data.frame(gsea_chondro_case_vs_control)
 gseaNb(gsea_chondro_case_vs_control, geneSetID = gsea_chondro_case_vs_control_df$ID[1])
 
 # GSEA without custome
-head(rank_for_case_vs_control)
-length(rank_for_case_vs_control)
 rank_for_GO <- rank_frame$gene_name # нужны именованные гены в формате character (НЕ factor)
 ```
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 # биологические процессы
 ggo_bp <- groupGO(gene = rank_for_GO,
                   OrgDb = org.Hs.eg.db,
@@ -433,7 +470,7 @@ ego_cc <- enrichGO(
   OrgDb         = org.Hs.eg.db,      
   ont           = "CC",              
   pAdjustMethod = "BH",              
-  pvalueCutoff  = 0.05,              
+  pvalueCutoff  = 0.25,              
   qvalueCutoff  = 0.25,              
   keyType = 'SYMBOL',
   readable      = FALSE
@@ -441,6 +478,9 @@ ego_cc <- enrichGO(
 ```
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 # применение GO_GSEA
 ego_precise_MF <- gseGO(
@@ -472,6 +512,9 @@ datatable(ego_precise_MF_df,
 ```
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 ego_precise_BP <- gseGO(
   geneList     = rank_for_case_vs_control,
@@ -501,7 +544,16 @@ datatable(ego_precise_BP_df,
   )
 ```
 
+<p style="text-align: justify;">
+
+В данной таблице представлены результаты GSEA по биологическим процессам и молекулярным функциям (GO).
+
+</p>
+
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 ego_precise_СС <- gseGO(
   geneList     = rank_for_case_vs_control,
@@ -531,11 +583,19 @@ datatable(ego_precise_CC_df,
   )
 ```
 
+<p style="text-align: justify;">
+
+В данной таблице представлены результаты GSEA по клеточным компонентам (GO).
+
+</p>
+
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 # KEGG (подготавливаем именованный ранк)
 human <- search_kegg_organism('hsa', by='kegg_code')
-print(human)
 rank_for_KEGG <- bitr(rank_frame$gene_name,
                       fromType = "SYMBOL",
                       toType   = "ENTREZID", 
@@ -551,7 +611,7 @@ kegg_analysis_GSEA <- gseKEGG(geneList = kegg_rank_final,
                               organism     = 'hsa',
                               minGSSize    = 10,
                               maxGSSize = 800,
-                              pvalueCutoff = 0.25,
+                              pvalueCutoff = 0.5,
                               pAdjustMethod = 'BH',
                               verbose = FALSE)
 kegg_analysis_GSEA_df <- as.data.frame(kegg_analysis_GSEA)
@@ -563,7 +623,16 @@ datatable(kegg_analysis_GSEA_df,
           ))
 ```
 
+<p style="text-align: justify;">
+
+Результаты GSEA для базы данных KEGG.
+
+</p>
+
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 # WikiPathways
 options(timeout = 300)
@@ -584,7 +653,16 @@ datatable(wp_gsea_df,
           ))
 ```
 
+<p style="text-align: justify;">
+
+Результаты GSEA для базы данных WP.
+
+</p>
+
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 # Reactome pathway gene set enrichment analysis
 library(ReactomePA)
@@ -608,6 +686,12 @@ datatable(reactome_gsea,
 
 <p style="text-align: justify;">
 
+Результаты GSEA по базе данных reactome.
+
+</p>
+
+<p style="text-align: justify;">
+
 ## Анализ паттернов коэкспресии.
 
 </p>
@@ -615,6 +699,9 @@ datatable(reactome_gsea,
 ![![](images/clipboard-3774839603.png)](images/clipboard-3176948160.png)
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 data_green_chondro <- read.csv(file = "~/Desktop/GitHub/Chondro/case_vs_control/green_module/data_green_chondro.tsv", header = TRUE, sep = '\t')
 datatable(data_green_chondro,
@@ -625,7 +712,16 @@ datatable(data_green_chondro,
           ))
 ```
 
+<p style="text-align: justify;">
+
+Сохраняем коэкспрессионные модули в таблицу (модуль green).
+
+</p>
+
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 data_greenyellow_chondro <- read.csv(file = "~/Desktop/GitHub/Chondro/case_vs_control/data_yellowgreen_chondro.tsv", header = TRUE, sep = '\t')
 datatable(data_greenyellow_chondro,
@@ -636,11 +732,19 @@ datatable(data_greenyellow_chondro,
           ))
 ```
 
+<p style="text-align: justify;">
+
+Сохраняем коэкспрессионные модули в таблицу (модуль yellowgreen).
+
+</p>
+
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 # GSEA
 data_genes <- read.csv(file = "~/Desktop/GitHub/Chondro/ensbl2geneid.tsv",
                        header = TRUE, sep = '\t')
-head(vres_chondro_GG)
 net_GM_chondro <- read.csv(file = "~/Desktop/GitHub/Chondro/case_vs_control/net_GM_chondro.tsv", header = TRUE, sep = '\t')
 df_analysis <- setNames(object = net_GM_chondro$Modules, nm = net_GM_chondro$gene_id)
 colnames(data_genes)
@@ -672,7 +776,16 @@ write.table(x = gsea_df_greenyellow,file = "~/Desktop/GitHub/Chondro/case_vs_con
 gseaNb(gsea_greenyellow, geneSetID = gsea_greenyellow$ID[1])
 ```
 
+<p style="text-align: justify;">
+
+Обогащение по модулю yellowgreen и green.
+
+</p>
+
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 gsea_df_green <- read.xlsx(xlsxFile = "~/Desktop/GitHub/Chondro/case_vs_control/green_module/green_module_coex.xlsx", sheet = TRUE, sep = '\t')
 datatable(gsea_df_green,
@@ -684,6 +797,9 @@ datatable(gsea_df_green,
 ```
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 #| cache: true
 gsea_df_greenyellow <- read.xlsx(xlsxFile = "~/Desktop/GitHub/Chondro/case_vs_control/greenyellow_module_coex.xlsx", sheet = TRUE, sep = '\t')
 datatable(gsea_df_greenyellow,
@@ -695,22 +811,21 @@ datatable(gsea_df_greenyellow,
 ```
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
 # data from COex
 # green_module
 data_coex_green <- read.xlsx(xlsxFile = "~/Desktop/GitHub/Chondro/case_vs_control/green_module/green_module_coex.xlsx", colNames = T, sheet = T)
-length(colnames(data_coex_green))
 colnames(data_coex_green)[12] <- 'genes'
 
 data_coex_greenyellow <- read.xlsx(xlsxFile = "~/Desktop/GitHub/Chondro/case_vs_control/greenyellow_module_coex.xlsx", 
                                   colNames = T, sheet = T)
 # greenyellow_module
-length(colnames(data_coex_greenyellow))
 colnames(data_coex_greenyellow)[12] <- 'genes'
 
 # STRING for green_module
 data_green_chondro <- read.csv(file = "~/Desktop/GitHub/Chondro/case_vs_control/green_module/data_green_chondro.tsv", sep = '\t', header = T)
-head(rank_for_case_vs_control)
-tail(rank_for_case_vs_control)
 # individual rank for green_module
 green_string_data <- read.xlsx(xlsxFile = "~/Desktop/GitHub/Chondro/case_vs_control/green_module/1. Focal adhesion + Extracellular matrix organization (green_modul_cluster).xlsx",
                               sheet = T, colNames = T)
@@ -729,8 +844,6 @@ gsea_chondro_green_GSEA <- GSEA(geneList = rank_for_case_vs_control, TERM2GENE =
                                      pvalueCutoff = 0.05)
 gsea_chondro_green_GSEA_df <- as.data.frame(gsea_chondro_green_GSEA)
 gseaNb(gsea_chondro_green_GSEA, geneSetID = gsea_chondro_green_GSEA$ID[1])
-gsea_chondro_green_GSEA_df$core_enrichment
-typeof(gsea_chondro_green_GSEA_df$core_enrichment)
 # перевод в вектор 
 my_green <- scan(text = gsea_chondro_green_GSEA_df$core_enrichment, what = 'character', sep = '/')
 
