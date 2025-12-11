@@ -11,10 +11,9 @@ library(GseaVis)
 library(enrichplot) # на 22 версии BiocManager (аналогично и дргуие пакеты)
 library(org.Hs.eg.db) # база данных человеческого организма
 library(DOSE)
-meta_data_chondro <- read.xlsx("~/Desktop/GitHub/Chondro/chondro_metadata/chondro_metadata_1.xlsx", 
+meta_data_chondro <- read.xlsx("chondro_metadata/chondro_metadata_1.xlsx", 
                                sheet= T, sep="\t")
 meta_data_chondro_a <- meta_data_chondro
-colnames(meta_data_chondro_a)
 
 # Перевести значения в factor()
 meta_data_chondro_a <- subset(meta_data_chondro_a, meta_data_chondro_a$group == 'control' | 
@@ -25,7 +24,7 @@ meta_data_chondro_a$group <- relevel(meta_data_chondro_a$group, ref = "control")
 # фильтруем метаданные для оценки case or control
 # DEseq2
 ddsHTSeq <- DESeqDataSetFromHTSeqCount(sampleTable = meta_data_chondro_a,
-                                       directory = "~/Desktop/chondro_htseq",
+                                       directory = "chondro_htseq",
                                        design = ~ run + type + group)
 rownames(ddsHTSeq) <- sapply(strsplit(rownames(ddsHTSeq), "\\."), function(x) x[1])
 
@@ -38,10 +37,8 @@ min_samples <- ncol(ddsHTSeq) / 3 * 2
 norm_counts <- counts(ddsHTSeq, normalized = TRUE)
 keep <- rowSums(norm_counts >= min_count) >= min_samples
 ddsHTSeq <- ddsHTSeq[keep, ]
-summary(keep)
 
 ddsHTSeq <- DESeq(ddsHTSeq, test = "Wald")
-resultsNames(ddsHTSeq)
 
 # Применение модуля vst для нормализации данных
 vsd_1 <- vst(object = ddsHTSeq, blind = F)
@@ -114,7 +111,7 @@ volcano_plot_1 <- ggplot(res_chondro_GG, aes(x = log2FoldChange, y = -log10(padj
 print(volcano_plot_1)
 # Dataset
 write.table(cbind(gene_id = rownames(res_chondro_GG), res_chondro_GG),
-            file = "~/Desktop/GitHub/Chondro/case_vs_control.tsv", sep = "\t", quote = F)
+            file = "case_vs_control/case_vs_control.tsv", sep = "\t", quote = F)
 # Points (>= | <=)
 res_chondro_GG_UR <- subset(res_chondro_GG, res_chondro_GG$log2FoldChange >= 0)
 tail(res_chondro_GG_UR)
@@ -123,7 +120,7 @@ res_chondro_GG_DR <- subset(res_chondro_GG, res_chondro_GG$log2FoldChange <= 0)
 head(res_chondro_GG_DR)
 # STRING (custome_genes)
 # UR_1
-custome_UR_1 <- read.xlsx(xlsxFile = "~/Desktop/Хондроциты(проверка результатов)/UR_chondro/Mixed, incl. Amplification of signal from the kinetochores, and Condensin complex_UR.xlsx",
+custome_UR_1 <- read.xlsx(xlsxFile = "case_vs_control/UR/(+)Mixed, incl. Amplification of signal from the kinetochores, and Condensin complex.xlsx",
                           colNames = T)
 colnames(custome_UR_1)[1] <- 'node1'
 custome_UR_1_vector <- c(unique(custome_UR_1$node1), unique(custome_UR_1$node2))
@@ -132,7 +129,7 @@ custome_UR_1_vector_df <- as.data.frame(custome_UR_1_vector)
 custome_UR_1_vector_df$cluster <- 'cl1'
 colnames(custome_UR_1_vector_df)[1] <- 'gene_name'
 # DR_1
-custome_DR_1 <- read.xlsx(xlsxFile = "~/Desktop/Хондроциты(проверка результатов)/DR_chondro/Extracellular matrix organization_DR_cluster_1.xlsx",
+custome_DR_1 <- read.xlsx(xlsxFile = "case_vs_control/DR/(-)ECM-receptor interaction+Extracellular matrix organization.xlsx",
                           colNames = T)
 colnames(custome_DR_1)[1] <- 'node1'
 custome_DR_1_vector <- c(unique(custome_DR_1$node1), unique(custome_DR_1$node2))
@@ -141,7 +138,7 @@ custome_DR_1_vector_df <- as.data.frame(custome_DR_1_vector)
 custome_DR_1_vector_df$cluster <- 'cl2'
 colnames(custome_DR_1_vector_df)[1] <- 'gene_name'
 # DR_2
-custome_DR_2 <- read.xlsx(xlsxFile = "~/Desktop/Хондроциты(проверка результатов)/DR_chondro/Mixed, incl. Interferon alpha:beta signaling, and Guanylate-binding protein, C-terminal_DR_cluster_2.tsv.xlsx",
+custome_DR_2 <- read.xlsx(xlsxFile = "case_vs_control/DR/(-)Interferon alphabeta signaling+Defense response to virus+Antiviral defense.xlsx",
                           colNames = T)
 colnames(custome_DR_2)[1] <- 'node1'
 custome_DR_2_vector <- c(unique(custome_DR_2$node1), unique(custome_DR_2$node2))
@@ -151,12 +148,12 @@ custome_DR_2_vector_df$cluster <- 'cl3'
 colnames(custome_DR_2_vector_df)[1] <- 'gene_name'
 # Genset
 gene_set <- rbind(custome_UR_1_vector_df, custome_DR_1_vector_df, custome_DR_2_vector_df)
-write.table(file = "~/Desktop/Хондроциты(проверка результатов)/case_vs_control_gene_set.tsv",
+write.table(file = "case_vs_control/case_vs_control_gene_set.tsv",
             quote = F, sep = '\t', x = gene_set)
 gene_set_list <- setNames(gene_set$cluster, as.character(gene_set$gene_name))
 # Data from DESeq2
 vres_chondro_GG <- as.data.frame(vres_chondro_GG)
-metadata_for_chondro <- read.csv(file = "~/Desktop/Хондроциты(проверка результатов)/ensbl2geneid_first.tsv",
+metadata_for_chondro <- read.csv(file = "chondro_metadata/ensbl2geneid.tsv",
                                  sep = '\t')
 head(metadata_for_chondro)
 colnames(vres_chondro_GG)
@@ -174,7 +171,7 @@ rank_for_case_vs_control <- rank_for_case_vs_control[!duplicated(names(rank_for_
 # Custome GSEA
 gsea_chondro_case_vs_control <- GSEA(geneList = rank_for_case_vs_control, TERM2GENE = gene_set[c(2,1)], 
                        eps = 0, pAdjustMethod = "fdr",
-                       pvalueCutoff = 0.5) # none significant
+                       pvalueCutoff = 0.25) # none significant
 gsea_chondro_case_vs_control_df <- as.data.frame(gsea_chondro_case_vs_control)
 gseaNb(gsea_chondro_case_vs_control, geneSetID = gsea_chondro_case_vs_control_df$ID[1])
 
@@ -246,7 +243,7 @@ ego_precise_MF <- gseGO(
   ont          = "MF",
   minGSSize    = 15,      # минимальный размер
   maxGSSize    = 500,
-  pvalueCutoff = 0.05,
+  pvalueCutoff = 0.25,
   pAdjustMethod = "BH", 
   keyType = 'SYMBOL',
   verbose      = FALSE
@@ -304,7 +301,7 @@ kegg_analysis_GSEA <- gseKEGG(geneList = kegg_rank_final,
                               pAdjustMethod = 'BH',
                               verbose = FALSE)
 kegg_analysis_GSEA_df <- as.data.frame(kegg_analysis_GSEA)
-browseKEGG(kegg_analysis_GSEA_df, 'hsa03420') # можно менять индексы из фрейма данных
+#browseKEGG(kegg_analysis_GSEA_df, 'hsa03420') # можно менять индексы из фрейма данных
 
 # WikiPathways
 options(timeout = 300)
@@ -314,7 +311,7 @@ wp_gsea <- gseWP(
   minGSSize = 10,
   maxGSSize = 500,
   pAdjustMethod = 'BH',
-  pvalueCutoff = 0.25,
+  pvalueCutoff = 0.5,
   verbose = FALSE)
 wp_gsea_df <- as.data.frame(wp_gsea)
 
@@ -332,7 +329,8 @@ reactome_gsea <- gsePathway(
 reactome_gsea <- as.data.frame(reactome_gsea)
 
 # meta data import
-meta_data_case_vs_control <- read.xlsx(xlsxFile = "/home/veretinegor/R/metachondro.xlsx", 
+# старая директория "/home/veretinegor/R/metachondro.xlsx"
+meta_data_case_vs_control <- read.xlsx(xlsxFile = "chondro_metadata/chondro_metadata_1.xlsx", 
                                        sheet = T, sep = '\t')
 head(meta_data_case_vs_control)
 # DESeq2
@@ -344,7 +342,7 @@ meta_data_analisys[] <- lapply(meta_data_analisys, factor)
 meta_data_analisys$group <- relevel(meta_data_analisys$group, ref = 'control')
 
 ddsHTSeq <- DESeqDataSetFromHTSeqCount(sampleTable = meta_data_analisys,
-                                       directory = "~/Desktop/chondro_htseq",
+                                       directory = "chondro_htseq",
                                        design = ~ run + type + group)
 rownames(ddsHTSeq) <- sapply(strsplit(rownames(ddsHTSeq), "\\."), function(x) x[1])
 
@@ -427,9 +425,9 @@ plot_expression_profile(
 summary(net.p)
 net_Mes_chondro <- data.frame(net.p$MEs)
 net_GM_chondro <- data.frame(net.p$genes_and_modules)
-write.table(net_Mes_chondro, file = "/home/veretinegor/R/net_Mes_chondro.tsv", sep ="\t", quote = F)
-write.table(net_GM_chondro, file = "/home/veretinegor/R/net_GM_chondro.tsv", sep ="\t", quote = F)
-data_genes <- read.csv("/home/veretinegor/R/ensbl2geneid.tsv", header = T, sep = "\t")
+write.table(net_Mes_chondro, file = "case_vs_control/net_Mes_chondro.tsv", sep ="\t", quote = F)
+write.table(net_GM_chondro, file = "case_vs_control/net_GM_chondro.tsv", sep ="\t", quote = F)
+data_genes <- read.csv("chondro_metadata/ensbl2geneid.tsv", header = T, sep = "\t")
 net_GM_chondro$gene_id <- net_GM_chondro$Genes
 net_GM_chondro$Genes <- NULL
 data_chondro <- merge(net_GM_chondro, data_genes, by = 'gene_id')
@@ -438,9 +436,11 @@ data_chondro$description <- NULL
 # Создаем группу целевых модулей, для более глубокого анализа необходимо разделить модули!
 data_group <- subset(data_chondro, data_chondro$Modules == 'greenyellow' | data_chondro$Modules == 'green')
 data_green_chondro <- subset(data_group, data_group$Modules == 'green')
-write.table(x = data_green_chondro, file = "/home/veretinegor/R/data_green_chondro.tsv", sep = "\t", quote = F)
+write.table(x = data_green_chondro, file = "case_vs_control/green_module/data_green_chondro.tsv", 
+            sep = "\t", quote = F)
 data_greenyellow_chondro <- subset(data_group, data_group$Modules == 'greenyellow')
-write.table(x = data_greenyellow_chondro, file = "/home/veretinegor/R/data_yellowgreen_chondro.tsv", sep = "\t", quote = F)
+write.table(x = data_greenyellow_chondro, file = "case_vs_control/data_yellowgreen_chondro.tsv", 
+            sep = "\t", quote = F)
 # GSEA
 head(vres_chondro_GG)
 df_analysis <- setNames(object = net_GM_chondro$Modules, nm = net_GM_chondro$gene_id)
@@ -462,35 +462,35 @@ print(length(rank_final_GSEA))
 gsea_green <- GSEA(geneList = rank_final_GSEA, TERM2GENE = data_green_chondro[c(2,3)], 
                    eps = 0, pAdjustMethod = "fdr")
 gsea_df_green <- data.frame(gsea_green)
-write.table(x = gsea_df_green,file = "/home/veretinegor/R/green_module_coex.tsv")
+write.table(x = gsea_df_green,file = "case_vs_control/green_module/green_module_coex.tsv")
 gseaNb(gsea_green, geneSetID = gsea_df_green$ID[1])
 
 gsea_greenyellow <- GSEA(geneList = rank_final_GSEA, TERM2GENE = data_greenyellow_chondro[c(2,3)], 
                          eps = 0, pAdjustMethod = "fdr", pvalueCutoff = 0.5)
 gsea_df_greenyellow <- data.frame(gsea_greenyellow)
-write.table(x = gsea_df_greenyellow,file = "/home/veretinegor/R/greenyellow_module_coex.tsv")
+write.table(x = gsea_df_greenyellow,file = "case_vs_control/greenyellow_module_coex.tsv")
 gseaNb(gsea_greenyellow, geneSetID = gsea_greenyellow$ID[1])
 
 # data from COex
 # green_module
-data_coex_green <- read.xlsx(xlsxFile = "~/Desktop/GitHub/Chondro/case_vs_control/green_module_coex.xlsx",
+data_coex_green <- read.xlsx(xlsxFile = "case_vs_control/green_module/green_module_coex.tsv",
                             colNames = T, sheet = T)
 length(colnames(data_coex_green))
 colnames(data_coex_green)[12] <- 'genes'
 
-data_coex_greenyellow <- read.xlsx(xlsxFile = "~/Desktop/GitHub/Chondro/case_vs_control/greenyellow_module_coex.xlsx", 
+data_coex_greenyellow <- read.xlsx(xlsxFile = "case_vs_control/greenyellow_module_coex.tsv", 
                                   colNames = T, sheet = T)
 # greenyellow_module
 length(colnames(data_coex_greenyellow))
 colnames(data_coex_greenyellow)[12] <- 'genes'
 
 # STRING for green_module
-data_green_chondro <- read.csv(file = "~/Desktop/GitHub/Chondro/case_vs_control/data_green_chondro.tsv",
+data_green_chondro <- read.csv(file = "case_vs_control/green_module/data_green_chondro.tsv",
                                sep = '\t', header = T)
 head(rank_for_case_vs_control)
 tail(rank_for_case_vs_control)
 # individual rank for green_module
-green_string_data <- read.xlsx(xlsxFile = "~/Desktop/GitHub/Chondro/case_vs_control/green_module/1. Focal adhesion + Extracellular matrix organization (green_modul_cluster).xlsx",
+green_string_data <- read.xlsx(xlsxFile = "case_vs_control/green_module/1. Focal adhesion + Extracellular matrix organization (green_modul_cluster).xlsx",
                               sheet = T, colNames = T)
 colnames(green_string_data)[1] <- 'node1'
 custom_green_module <- c(unique(green_string_data$node1), unique(green_string_data$node2))
@@ -499,7 +499,7 @@ custom_green_module_df <- as.data.frame(custom_green_module_vector)
 custom_green_module_df$cluster <- 'green'
 colnames(custom_green_module_df)[1] <- 'gene_name'
 write.table(x = custom_green_module_df, 
-            file = '~/Desktop/GitHub/Chondro/case_vs_control/custom_green_module_df.tsv', quote = F,
+            file = "case_vs_control/custom_green_module_df.tsv", quote = F,
             sep = '\t')
 # GSEA
 gsea_chondro_green_GSEA <- GSEA(geneList = rank_for_case_vs_control, TERM2GENE = custom_green_module_df[c(2,1)], 
